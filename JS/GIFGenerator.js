@@ -31,7 +31,6 @@ class GIFGenerator {
     }
     headerGenerator() {
         this.stream.writeUTF("GIF89a");
-        // this.writeUTFBytes("GIF89a");
     }
     LSDGenerator() {
         this.stream.littleEndian(this.width);

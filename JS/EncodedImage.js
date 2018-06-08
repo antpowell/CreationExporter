@@ -1,7 +1,4 @@
 class EncodedImage {
-    // constructor(data: number[]){
-    //     this.data = data;
-    // }
     constructor() {
         this.data = [];
     }
