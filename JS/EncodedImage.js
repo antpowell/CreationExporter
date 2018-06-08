@@ -30,3 +30,4 @@ class EncodedImage {
         this.write((num >> 8) & 0xff);
     }
 }
+//# sourceMappingURL=EncodedImage.js.map

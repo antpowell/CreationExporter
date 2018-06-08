@@ -15,18 +15,21 @@ const indexedPixels: number[] = [];
 let canvasData: Uint8ClampedArray;
 let gifGenerator: GIFGenerator;
 let firstFrame = true;
+let frameCount = 0;
 
 function init() {
 
     setCanvas();
     generateColorTable();
+    generateGIF();
+    localStorage.frameCount = 0;
 
 }
 init();
 
 function generateGIF() {
-    gifGenerator = new GIFGenerator(canvas.width, canvas.height, indexedPixels, globalColorTable);
-    gifGenerator.generate();
+    gifGenerator = new GIFGenerator(canvas.width, canvas.height, globalColorTable);
+    gifGenerator.init();
     firstFrame = false;
 }
 
@@ -38,6 +41,7 @@ function setCanvas(imgSource ? : string) {
     img.src = imgSource || 'https://picsum.photos/458/354';
     img.onload = () => {
         canvasContext.drawImage(img, 0, 0, canvas.width, canvas.height);
+        frameCount += 1;
     }
 
 }
@@ -114,17 +118,21 @@ function reset() {
 }
 
 snapshotBtn.addEventListener('click', () => {
+
     canvasData = canvasContext.getImageData(0, 0, canvas.width, canvas.height).data;
     removeAlpha(canvasData);
     mapPixelIndex();
-    generateGIF();
+    gifGenerator.generateFrame(indexedPixels, frameCount);
+
 })
 
 downloadGIFBtn.addEventListener('click', () => {
+    
     gifGenerator.download('CanvasExporter.gif');
 })
 
 swapImageBtn.addEventListener('click', () => {
+
     reset();
-    setCanvas('https://picsum.photos/800/800/?random');
+    setCanvas('https://picsum.photos/600/600/?random');
 })

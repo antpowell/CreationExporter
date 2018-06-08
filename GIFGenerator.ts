@@ -6,31 +6,39 @@ class GIFGenerator {
     width: number;
     height: number;
     encodedImage: EncodedImage = new EncodedImage()
-    indexedPixels: number[];
+    frameIndexedPixels: number[];
+    frameCount: number = 0;
     GCT: string[];
 
-    constructor(width: number, height: number, indexedPixels: number[], GCT: string[]) {
+    constructor(width: number, height: number, GCT: string[]) {
         this.width = width;
         this.height = height;
-        this.indexedPixels = indexedPixels;
         this.GCT = GCT;
         console.log(`Generator now running...`);
     };
 
-    generate() {
-
+    init(){
         this.headerGenerator();
         this.LSDGenerator();
         this.GCTWriter();
+        this.AppExtGenerator();
+    }
+
+    generateFrame(indexedPixels:number[], frameCount:number) {
+
+        this.frameIndexedPixels = indexedPixels;
+        this.frameCount += 1
+        console.log(`generating frame ${this.frameCount}`)
         this.GCEGenerator();
         this.imgDescGenerator();
         this.imgDataGenerator();
-        this.AppExtGenerator();
-        this.TrailerGenerator();
-
+        
     }
 
     download(filename: string) {
+        
+        this.TrailerGenerator();
+
         console.log('downloading');
         console.log(this.stream);
 
@@ -60,8 +68,8 @@ class GIFGenerator {
         this.stream.write(0x21);                            /* Extension Introducer */
         this.stream.write(0xf9);                            /* Graphic Control Label */
         this.stream.write(0x4);                             /* Byte Size */
-        this.stream.write(0x0);                             /* Packed Field */
-        this.stream.littleEndian(0x0);                      /* Delay Time */
+        this.stream.write(0x4);                             /* Packed Field */
+        this.stream.littleEndian(0x32);                      /* Delay Time */
         this.stream.write(0x0);                             /* Transparent Color Index */
         this.stream.write(0x0);                             /* Block Terminator */
     }
@@ -75,7 +83,7 @@ class GIFGenerator {
         this.stream.write(0x0);                             /* Block Terminator */
     }
 
-    AppExtGenerator() {
+    AppExtGenerator() { 
         this.stream.write(0x21);                            /* extension introducer */
         this.stream.write(0xff);                            /* app extension label */
         this.stream.write(11);                              /* block size */
@@ -105,8 +113,10 @@ class GIFGenerator {
     }
 
     imgDataGenerator() {
-        const encoder = new LZWEncoder(this.width, this.height, this.indexedPixels, 8);
+
+        const encoder = new LZWEncoder(this.width, this.height, this.frameIndexedPixels, 8);
         encoder.encode(this.stream);
+        console.log(`completed frame ${this.frameCount}`)
         
     }
 
