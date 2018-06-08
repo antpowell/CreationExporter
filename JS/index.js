@@ -12,6 +12,7 @@ const globalColorTable = [];
 const indexedPixels = [];
 let canvasData;
 let gifGenerator;
+let firstFrame = true;
 function init() {
     setCanvas();
     generateColorTable();
@@ -20,6 +21,7 @@ init();
 function generateGIF() {
     gifGenerator = new GIFGenerator(canvas.width, canvas.height, indexedPixels, globalColorTable);
     gifGenerator.generate();
+    firstFrame = false;
 }
 function setCanvas(imgSource) {
     let img = new Image();
