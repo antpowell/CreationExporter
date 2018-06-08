@@ -30,8 +30,6 @@ function generateGIF() {
 
 function setCanvas(imgSource ? : string) {
 
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-
     let img = new Image() as HTMLImageElement;
 
     img.crossOrigin = 'Anonymous'
@@ -106,7 +104,10 @@ function littleEndian() {
 }
 
 function reset() {
+
     RGBPixelData.length = 0;
+    indexedPixels.length = 0;
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 
 }
 
@@ -122,5 +123,6 @@ downloadGIFBtn.addEventListener('click', () => {
 })
 
 swapImageBtn.addEventListener('click', () => {
+    reset();
     setCanvas('https://picsum.photos/800/800/?random');
 })
